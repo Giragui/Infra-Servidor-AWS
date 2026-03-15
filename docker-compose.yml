@@ -1,0 +1,87 @@
+services:
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./site:/usr/share/caddy
+      - ./certicaddy:/data
+      - caddy_config:/config
+      - ./caddy_logs:/var/log/caddy
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    environment:
+      - N8N_HOST=iragui.ddns.net
+      - N8N_PROTOCOL=https
+      - WEBHOOK_URL=https://"TUDOMINIO"/n8n/
+      - N8N_PATH=/n8n/
+      - NODE_ENV=production
+    volumes:
+      - ./n8n_data:/home/node/.n8n
+
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Argentina/Buenos_Aires
+      - PEERS=15        # <--- Agrega esta línea
+      - PEERDNS=auto    # <--- Opcional: para que usen el DNS del servidor
+    ports:
+      - "51820:51820/udp"
+    volumes:
+      - ./wireguard_config:/config # <--- ¡IMPORTANTE! Agrega esto para no perder los QR
+      - /lib/modules:/lib/modules
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "TU CLAVE DE BASE DE DATOS"
+      MYSQL_DATABASE: Comandos
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_ARBITRARY: 1
+
+  php:
+    build: .
+    container_name: php
+    env_file: .env
+    environment:
+      - MYSQL_HOST=${DB_HOST}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+    restart: unless-stopped
+    volumes:
+      - ./site:/usr/share/caddy
+      - ./logs:/var/www/html/logs  # <-- Este es el puente
+    networks:
+      - default
+
+volumes:
+  db_data:
+  caddy_config:

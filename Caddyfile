@@ -1,0 +1,22 @@
+"TU DOMINIO" {
+    # 1. Servir la web de los hongos usando la ruta interna estándar
+    root * /usr/share/caddy
+    file_server
+
+    # 2. Configuración de PHP ajustada
+    php_fastcgi php:9000 {
+        root /usr/share/caddy
+    }
+
+    # 3. n8n y resto de la configuración igual...
+    handle_path /n8n* {
+        reverse_proxy n8n:5678
+    }
+
+    log {
+        output file /var/log/caddy/access.log
+        format json
+    }
+
+    encode gzip
+}
