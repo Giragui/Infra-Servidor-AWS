@@ -24,8 +24,7 @@ Este repositorio contiene la configuración base para desplegar un entorno de au
 
 1.  **Clonar el repositorio:**
     ```bash
-    git clone https://github.com/Giragui/Infra-Servidor-AWS.git
-    cd Infra-Servidor-AWS
+    git clone https://github.com/Giragui/Infra-Servidor-AWS.git && cd Infra-Servidor-AWS
     ```
 
 3.  **Configurar variables de entorno:**
