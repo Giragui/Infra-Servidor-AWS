@@ -24,21 +24,21 @@ Este repositorio contiene la configuración base para desplegar un entorno de au
 
 1.  **Clonar el repositorio:**
     ```bash
-    git clone [https://github.com/Giragui/Infra-Servidor-AWS.git](https://github.com/Giragui/Infra-Servidor-AWS.git)
+    git clone https://github.com/Giragui/Infra-Servidor-AWS.git
     cd Infra-Servidor-AWS
     ```
 
-2.  **Configurar variables de entorno:**
+3.  **Configurar variables de entorno:**
     Copia el archivo de ejemplo y edítalo con tus claves reales:
     ```bash
     cp env.example .env
     nano .env
     ```
 
-3.  **Configurar el Caddyfile:**
+4.  **Configurar el Caddyfile:**
     Asegúrate de reemplazar `"TU DOMINIO"` por tu dominio real en el archivo `Caddyfile`.
 
-4.  **Levantar los servicios:**
+5.  **Levantar los servicios:**
     ```bash
     docker-compose up -d
     ```
