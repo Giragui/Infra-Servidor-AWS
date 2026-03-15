@@ -1,4 +1,5 @@
 ## 🚀 Infraestructura Servidor CREADO POR EL MACHO LOMO PLATEADO IRAGUI.
+![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white) ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white) ![Debian](https://img.shields.io/badge/Debian-%23D70A53.svg?style=for-the-badge&logo=debian&logoColor=white) ![n8n](https://img.shields.io/badge/n8n-FF6C37?style=for-the-badge&logo=n8n&logoColor=white)
 
 Este repositorio contiene la configuración base para desplegar un entorno de automatización y servicios web en un servidor Debian/Ubuntu utilizando Docker.
 
@@ -51,3 +52,17 @@ Para conectar tus dispositivos a la red privada del servidor:
 ## 🔐 Notas de Seguridad
 * Nunca subas el archivo `.env` al repositorio (está incluido en `.gitignore`).
 * Cambia las contraseñas por defecto en el archivo `.env` antes de levantar el stack.
+
+### 📊 Arquitectura del Sistema
+```mermaid
+graph TD
+    User((Usuario/Admin)) -->|Puerto 80/443| Caddy[Caddy Server - SSL Auto]
+    User -->|Puerto 51820 UDP| WG[WireGuard VPN]
+    
+    subgraph "Docker Stack (AWS EC2)"
+        Caddy -->|Proxy| n8n[n8n Automation]
+        Caddy -->|Serves| PHP[App PHP]
+        PHP -->|Query| MySQL[(MySQL 8.0 Database)]
+        PMA[phpMyAdmin] -->|Manage| MySQL
+        WG -->|Secure Access| InternalNet[Red Interna Docker]
+    end
